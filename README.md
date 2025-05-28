@@ -1,2 +1,2 @@
 # testwaleAI
-It contains frontend code for different pages
+It contains the codes related to admin page and result page.
