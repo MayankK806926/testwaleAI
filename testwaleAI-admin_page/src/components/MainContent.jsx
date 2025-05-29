@@ -4,6 +4,7 @@ import FilterSection from './dashboard/FilterSection'
 import StatsCards from './dashboard/StatsCards'
 import ChartsSection from './dashboard/ChartsSection'
 import TopPerformers from './dashboard/TopPerformers'
+import AddQuestionSection from './dashboard/AddQuestionSection'
 
 const MainContent = () => {
   return (
@@ -17,8 +18,9 @@ const MainContent = () => {
         </div>
       </div>
       <StatsCards />
-      <ChartsSection />
+      <ChartsSection hideRevenue={true} />
       <TopPerformers />
+      <AddQuestionSection />
     </div>
   )
 }
