@@ -1,24 +1,40 @@
 import React, { useState } from 'react'
 import { FiChevronDown, FiChevronRight, FiHelpCircle, FiLogOut, FiAward } from 'react-icons/fi'
 import { PiGraduationCap } from 'react-icons/pi'
+import { useDashboard } from '../context/DashboardContext'
 
 const Sidebar = () => {
   const [gradeDropdown, setGradeDropdown] = useState(false)
   const [examDropdown, setExamDropdown] = useState(false)
+  const { handleGradeSelect, handleExamSelect, selectedGrade, selectedExam } = useDashboard()
 
-  const grades = ['Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12']
+  const grades = ['All Grades', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12']
   const exams = ['JEE Mains', 'JEE Advanced', 'NEET UG', 'KCET', 'BITSAT']
+
+  const toggleGradeDropdown = () => {
+    setGradeDropdown(!gradeDropdown)
+    if (!gradeDropdown) {
+      setExamDropdown(false)
+    }
+  }
+
+  const toggleExamDropdown = () => {
+    setExamDropdown(!examDropdown)
+    if (!examDropdown) {
+      setGradeDropdown(false)
+    }
+  }
 
   return (
     <aside className="w-64 bg-slate-800 text-white min-h-screen flex flex-col">
-      <div className="p-6 flex-1">
-        <h2 className="text-xl font-bold mb-8">Admin Panel</h2>
-        
+      <div className="flex-1 p-6">
         <nav className="space-y-2">
           <div>
             <button
-              onClick={() => setGradeDropdown(!gradeDropdown)}
-              className="flex items-center justify-between w-full px-4 py-3 text-left hover:bg-slate-700 rounded-lg transition-colors"
+              onClick={toggleGradeDropdown}
+              className={`flex items-center justify-between w-full px-4 py-3 text-left hover:bg-slate-700 rounded-lg transition-colors ${
+                selectedGrade ? 'bg-slate-700' : ''
+              }`}
             >
               <div className="flex items-center">
                 <PiGraduationCap className="w-5 h-5 mr-3" />
@@ -30,13 +46,20 @@ const Sidebar = () => {
             {gradeDropdown && (
               <div className="ml-8 mt-2 space-y-1">
                 {grades.map((grade) => (
-                  <a
+                  <button
                     key={grade}
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-slate-700 rounded transition-colors"
+                    onClick={() => {
+                      handleGradeSelect(grade)
+                      setExamDropdown(false)
+                    }}
+                    className={`block w-full text-left px-4 py-2 text-sm ${
+                      selectedGrade === grade 
+                        ? 'bg-purple-600 text-white' 
+                        : 'text-gray-300 hover:text-white hover:bg-slate-700'
+                    } rounded transition-colors`}
                   >
                     {grade}
-                  </a>
+                  </button>
                 ))}
               </div>
             )}
@@ -44,8 +67,10 @@ const Sidebar = () => {
 
           <div>
             <button
-              onClick={() => setExamDropdown(!examDropdown)}
-              className="flex items-center justify-between w-full px-4 py-3 text-left hover:bg-slate-700 rounded-lg transition-colors"
+              onClick={toggleExamDropdown}
+              className={`flex items-center justify-between w-full px-4 py-3 text-left hover:bg-slate-700 rounded-lg transition-colors ${
+                selectedExam ? 'bg-slate-700' : ''
+              }`}
             >
               <div className="flex items-center">
                 <FiAward className="w-5 h-5 mr-3" />
@@ -57,13 +82,20 @@ const Sidebar = () => {
             {examDropdown && (
               <div className="ml-8 mt-2 space-y-1">
                 {exams.map((exam) => (
-                  <a
+                  <button
                     key={exam}
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-slate-700 rounded transition-colors"
+                    onClick={() => {
+                      handleExamSelect(exam)
+                      setGradeDropdown(false)
+                    }}
+                    className={`block w-full text-left px-4 py-2 text-sm ${
+                      selectedExam === exam 
+                        ? 'bg-purple-600 text-white' 
+                        : 'text-gray-300 hover:text-white hover:bg-slate-700'
+                    } rounded transition-colors`}
                   >
                     {exam}
-                  </a>
+                  </button>
                 ))}
               </div>
             )}
@@ -71,7 +103,7 @@ const Sidebar = () => {
         </nav>
       </div>
 
-      <div className="p-6 border-t border-slate-700">
+      <div className="mt-auto p-6 border-t border-slate-700">
         <nav className="space-y-2">
           <a
             href="#"
