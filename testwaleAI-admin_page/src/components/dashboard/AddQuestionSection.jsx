@@ -11,6 +11,7 @@ const AddQuestionSection = () => {
   const [options, setOptions] = useState(['', '', '', '']);
   const [correctOption, setCorrectOption] = useState(0);
   const [trueOrFalse, setTrueOrFalse] = useState('true');
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   // Different subjects based on grade or exam type
   const subjectOptions = {
@@ -40,9 +41,15 @@ const AddQuestionSection = () => {
     setOptions(newOptions);
   };
 
+  const handleFileUpload = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setUploadedFile(e.target.files[0]);
+      setQuestion(''); // Clear text if file is uploaded
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle the submission logic here
     const submissionData = {
       question,
       questionType,
@@ -65,6 +72,11 @@ const AddQuestionSection = () => {
         submissionData.answer = answer;
     }
 
+    if (uploadedFile) {
+      submissionData.file = uploadedFile;
+    } else {
+      submissionData.question = question;
+    }
     console.log(submissionData);
 
     // Clear the form
@@ -75,6 +87,7 @@ const AddQuestionSection = () => {
     setOptions(['', '', '', '']);
     setCorrectOption(0);
     setTrueOrFalse('true');
+    setUploadedFile(null);
   };
 
   if ((viewType === 'grades' && selectedGrade === '') || 
@@ -223,14 +236,44 @@ const AddQuestionSection = () => {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Question
           </label>
-          <input
-            type="text"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder={questionType === 'fill_blank' ? 'Use ___ for the blank space in your question' : 'Enter your question'}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            required
-          />
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={question}
+              onChange={(e) => {
+                setQuestion(e.target.value);
+                setUploadedFile(null); // Clear file if typing
+              }}
+              placeholder={questionType === 'fill_blank' ? 'Use ___ for the blank space in your question' : 'Enter your question'}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              disabled={!!uploadedFile}
+              required={!uploadedFile}
+            />
+            <span className="text-gray-500">or</span>
+            <label>
+              <input
+                type="file"
+                accept="image/*,.pdf"
+                className="hidden"
+                onChange={handleFileUpload}
+              />
+              <span className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors cursor-pointer">
+                Upload
+              </span>
+            </label>
+          </div>
+          {uploadedFile && (
+            <div className="mt-2 text-sm text-green-600">
+              Uploaded: {uploadedFile.name}
+              <button
+                type="button"
+                className="ml-2 text-red-500 underline"
+                onClick={() => setUploadedFile(null)}
+              >
+                Remove
+              </button>
+            </div>
+          )}
         </div>
 
         {renderAnswerSection()}
@@ -248,4 +291,4 @@ const AddQuestionSection = () => {
   );
 };
 
-export default AddQuestionSection; 
+export default AddQuestionSection;
